@@ -1,0 +1,294 @@
+[
+{
+    "model": "catalog.category",
+    "pk": 1,
+    "fields": {
+        "name": "Мобильная электроника",
+        "description": "Гаджеты"
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 2,
+    "fields": {
+        "name": "Бытовая техника",
+        "description": "Товары для дома"
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 3,
+    "fields": {
+        "name": "Атомобиль",
+        "description": "жоповозки"
+    }
+},
+{
+    "model": "catalog.category",
+    "pk": 4,
+    "fields": {
+        "name": "Инструменты",
+        "description": "Для ремонта"
+    }
+},
+{
+    "model": "catalog.products",
+    "pk": 1,
+    "fields": {
+        "name": "IPhone16",
+        "description": "Смарфон",
+        "image": "",
+        "category": 1,
+        "purchase_price": 120000,
+        "created_at": "2025-07-21T18:40:52.814Z",
+        "updated_at": "2025-07-21T18:40:52.815Z"
+    }
+},
+{
+    "model": "catalog.products",
+    "pk": 2,
+    "fields": {
+        "name": "IPhone16PRO",
+        "description": "Смарфон",
+        "image": "",
+        "category": 1,
+        "purchase_price": 130000,
+        "created_at": "2025-07-21T18:43:17.136Z",
+        "updated_at": "2025-07-21T18:43:17.136Z"
+    }
+},
+{
+    "model": "catalog.products",
+    "pk": 3,
+    "fields": {
+        "name": "IPhone15",
+        "description": "Смарфон",
+        "image": "",
+        "category": 1,
+        "purchase_price": 50000,
+        "created_at": "2025-07-21T18:43:17.138Z",
+        "updated_at": "2025-07-21T18:43:17.138Z"
+    }
+},
+{
+    "model": "catalog.products",
+    "pk": 5,
+    "fields": {
+        "name": "IPhone16PRO MAX",
+        "description": "Смарфон",
+        "image": "",
+        "category": 1,
+        "purchase_price": 130000,
+        "created_at": "2025-07-21T18:43:17.141Z",
+        "updated_at": "2025-07-21T18:43:17.141Z"
+    }
+},
+{
+    "model": "catalog.products",
+    "pk": 6,
+    "fields": {
+        "name": "Samsung 55 Дюймов",
+        "description": "Телевизор",
+        "image": "",
+        "category": 2,
+        "purchase_price": 40000,
+        "created_at": "2025-07-21T18:49:43.218Z",
+        "updated_at": "2025-07-21T18:49:43.218Z"
+    }
+},
+{
+    "model": "catalog.products",
+    "pk": 7,
+    "fields": {
+        "name": "LG 65 OLED",
+        "description": "Телевизор",
+        "image": "",
+        "category": 2,
+        "purchase_price": 130000,
+        "created_at": "2025-07-21T18:49:43.230Z",
+        "updated_at": "2025-07-21T18:49:43.230Z"
+    }
+},
+{
+    "model": "catalog.products",
+    "pk": 8,
+    "fields": {
+        "name": "Haier 40 Дюймов ",
+        "description": "Телевизор",
+        "image": "",
+        "category": 2,
+        "purchase_price": 12000,
+        "created_at": "2025-07-21T18:49:43.233Z",
+        "updated_at": "2025-07-21T18:49:43.233Z"
+    }
+},
+{
+    "model": "catalog.products",
+    "pk": 9,
+    "fields": {
+        "name": "Горизонт",
+        "description": "Телевизор",
+        "image": "",
+        "category": 2,
+        "purchase_price": 2000,
+        "created_at": "2025-07-21T18:49:43.234Z",
+        "updated_at": "2025-07-21T18:49:43.234Z"
+    }
+},
+{
+    "model": "catalog.products",
+    "pk": 10,
+    "fields": {
+        "name": "LG 55 OLED",
+        "description": "Телевизор",
+        "image": "",
+        "category": 2,
+        "purchase_price": 250000,
+        "created_at": "2025-07-21T18:49:43.235Z",
+        "updated_at": "2025-07-21T18:49:43.235Z"
+    }
+},
+{
+    "model": "catalog.products",
+    "pk": 11,
+    "fields": {
+        "name": "BMW",
+        "description": "Телевизор",
+        "image": "",
+        "category": 3,
+        "purchase_price": 4000000,
+        "created_at": "2025-07-21T18:53:07.497Z",
+        "updated_at": "2025-07-21T18:53:07.497Z"
+    }
+},
+{
+    "model": "catalog.products",
+    "pk": 12,
+    "fields": {
+        "name": "Zeekr",
+        "description": "Телевизор",
+        "image": "",
+        "category": 3,
+        "purchase_price": 23000000,
+        "created_at": "2025-07-21T18:53:07.508Z",
+        "updated_at": "2025-07-21T18:53:07.508Z"
+    }
+},
+{
+    "model": "catalog.products",
+    "pk": 13,
+    "fields": {
+        "name": "Mersedes",
+        "description": "Телевизор",
+        "image": "",
+        "category": 3,
+        "purchase_price": 600000,
+        "created_at": "2025-07-21T18:53:07.510Z",
+        "updated_at": "2025-07-21T18:53:07.510Z"
+    }
+},
+{
+    "model": "catalog.products",
+    "pk": 14,
+    "fields": {
+        "name": "Porshe",
+        "description": "Телевизор",
+        "image": "",
+        "category": 3,
+        "purchase_price": 1720000,
+        "created_at": "2025-07-21T18:53:07.510Z",
+        "updated_at": "2025-07-21T18:53:07.510Z"
+    }
+},
+{
+    "model": "catalog.products",
+    "pk": 15,
+    "fields": {
+        "name": "Opel",
+        "description": "Телевизор",
+        "image": "",
+        "category": 3,
+        "purchase_price": 2500000,
+        "created_at": "2025-07-21T18:53:07.511Z",
+        "updated_at": "2025-07-21T18:53:07.511Z"
+    }
+},
+{
+    "model": "catalog.products",
+    "pk": 16,
+    "fields": {
+        "name": "Болгарка",
+        "description": "Для ремонта",
+        "image": "",
+        "category": 4,
+        "purchase_price": 1000,
+        "created_at": "2025-07-21T18:58:49.686Z",
+        "updated_at": "2025-07-21T18:58:49.686Z"
+    }
+},
+{
+    "model": "catalog.products",
+    "pk": 17,
+    "fields": {
+        "name": "Дрель",
+        "description": "Для ремонта",
+        "image": "",
+        "category": 4,
+        "purchase_price": 10000,
+        "created_at": "2025-07-21T18:58:49.687Z",
+        "updated_at": "2025-07-21T18:58:49.687Z"
+    }
+},
+{
+    "model": "catalog.products",
+    "pk": 18,
+    "fields": {
+        "name": "шуруповерт",
+        "description": "Для ремонта",
+        "image": "",
+        "category": 4,
+        "purchase_price": 2000,
+        "created_at": "2025-07-21T18:58:49.688Z",
+        "updated_at": "2025-07-21T18:58:49.688Z"
+    }
+},
+{
+    "model": "catalog.products",
+    "pk": 19,
+    "fields": {
+        "name": "пила",
+        "description": "Для ремонта",
+        "image": "",
+        "category": 4,
+        "purchase_price": 5000,
+        "created_at": "2025-07-21T18:58:49.689Z",
+        "updated_at": "2025-07-21T18:58:49.689Z"
+    }
+},
+{
+    "model": "catalog.products",
+    "pk": 20,
+    "fields": {
+        "name": "лопата",
+        "description": "Для ремонта",
+        "image": "",
+        "category": 4,
+        "purchase_price": 400,
+        "created_at": "2025-07-21T18:58:49.690Z",
+        "updated_at": "2025-07-21T18:58:49.690Z"
+    }
+},
+{
+    "model": "catalog.products",
+    "pk": 21,
+    "fields": {
+        "name": "IPhone16",
+        "description": "Смарфон",
+        "image": "",
+        "category": 1,
+        "purchase_price": 121999,
+        "created_at": "2025-07-21T19:22:47.446Z",
+        "updated_at": "2025-07-21T19:22:47.446Z"
+    }
+}
+]
