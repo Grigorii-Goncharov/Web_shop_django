@@ -14,7 +14,14 @@
 3. Перенести проект в локальный репозиторий.
 4. Откройте модуль manage.py и перейдите по сслыке http://127.0.0.1:8000/
 
+создание фикстур:
+"python -Xutf8 manage.py dumpdata catalog.Products catalog.Category --output general_fixture.json --indent 4"  - общие
+"python -Xutf8 manage.py dumpdata catalog.Products --output products_fixture.json --indent 4" - конкретное
+"python manage.py loaddata products_fixture_load.json --database=default --ignorenonexistent"  - загрузка с указанием БД 
+из файла settings и указание игнорирования несуществующих полей
 
+Запуск кастомной команды на добалвение тестовых продуктов по категорям:   
+"python manage.py add_test_products"   
 
 ## Зависимости
 Зависимости проекта управляются через Poetry. Они перечислены в файле `pyproject.toml`
