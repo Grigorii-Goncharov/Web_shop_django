@@ -1,12 +1,17 @@
+
+
 from django.shortcuts import render
 from django.http import HttpResponse
-
+from catalog.models import Products, Category
 
 # Create your views here.
 
 
 def home(request):
-    return render(request, template_name="home.html")
+    products = Products.objects.all()
+    category = Category.objects.all()
+    context = {'products': products, 'category': category}
+    return render(request, template_name="home.html", context = context)
 
 
 # def contacts(request):

@@ -6,25 +6,35 @@
     <h1 class="display-4">Web Shop Django</h1>
     <p class="lead">Web Shop Django - это тестовый магазин приложений в рамках обучения SkyPRO</p>
 </div>
-
 <div class="container">
     <div class="row text-center">
-        <div class="col-3">
-            <div class="card mb-4 box-shadow">
-                <div class="card-header">
-                    <h4 class="my-0 font-weight-normal">Удобный сервис рассылок</h4>
-                </div>
-                <div class="card-body">
-                    <h1 class="card-title pricing-card-title">$ 140</h1>
-                    <ul class="list-unstyled mt-3 mb-4 text-start m-3">
-                        <li>- Неограниченная лицензия</li>
-                        <li>- Поддержка</li>
-                        <li>- Установка на сервер</li>
-                        <li>- Получение обновлений</li>
-                    </ul>
-                    <button type="button" class="btn btn-lg btn-block btn-outline-primary">Купить</button>
-                </div>
+        {% for product in products %}
+    <div class="col-3">
+        <div class="card mb-4 box-shadow">
+            <div class="card-header">
+                <h4 class="my-0 font-weight-normal">АРТИКУЛ: {{ product.id|lower }}</h4>
+            </div>
+            <div class="card-body">
+                <h1 class="card-title pricing-card-title"> {{ product.purchase_price }} ₽.</h1>
+                <ul class="list-unstyled mt-3 mb-4 text-start m-3">
+                    {% if product.image %}
+                        <img src="{{ product.image.url }}"
+                                 alt="{{ product.name }}"
+                                 style="height: 250px; object-fit: cover; width: 100%; object-position: center;">
+                    {% else %}
+                        <img src="/static/images/placeholder.jpg" alt="Нет изображения" class="img-fluid" >
+
+
+                    {% endif %}
+                    <li>- {{ product.name }}</li>
+                    <li>- ОПИСАНИЕ: </li>
+                    <li>- {{ product.description }}</li>
+
+                <button type="button" class="btn btn-lg btn-block btn-outline-primary">Купить</button>
             </div>
         </div>
     </div>
+{% endfor %}
+    </div>
+
 {% endblock %}
