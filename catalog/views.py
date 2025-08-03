@@ -1,16 +1,25 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.http import HttpResponse
-
-
-# Create your views here.
+from catalog.models import Products, Category
 
 
 def home(request):
-    return render(request, template_name="home.html")
+    products = Products.objects.all()
+    category = Category.objects.all()
+    context = {'products': products, 'category': category}
+    return render(request, template_name="home.html", context=context)
 
 
 # def contacts(request):
 #     return render(request, template_name="contacts.html")
+
+def product(request, pk):
+    '''Загрузка страницы с конкретным продуктом по первичному ключу'''
+    product = get_object_or_404(Products, pk=pk)
+    category = Category.objects.all()
+    context = {'product': product, 'category': category}
+    return render(request, 'product.html', context=context)
+
 
 # ФУНКЦИЯ ОТОБРАЖЕНИЯ И ОТПРАВКИ ФОРМЫ ЗАПРОСА
 def contacts(request):
