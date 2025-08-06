@@ -1,12 +1,13 @@
-# from django.urls import path
-# from catalog.apps import CatalogConfig
-# from .views import HomeView, ContactsView, ProductDetailView
-#
-# app_name = CatalogConfig.name
-#
-# urlpatterns = [
-#     path('', HomeView.as_view(), name="home"),  # главная страница
-#     path('contacts/', ContactsView.as_view(), name="contacts"),
-#     path('product/<int:pk>/', ProductDetailView.as_view(), name="product"),
-#
-# ]
+from django.urls import path
+from blog.apps import BlogConfig
+from blog.views import BlogPostListView, BlogPostDetailView, BlogPostCreateView, BlogPostUpdateView, BlogPostDeleteView
+
+app_name = BlogConfig.name
+
+urlpatterns = [
+    path('', BlogPostListView.as_view(), name='list'),
+    path('create/', BlogPostCreateView.as_view(), name='create'),
+    path('<int:pk>/', BlogPostDetailView.as_view(), name='detail'),
+    path('<int:pk>/edit/', BlogPostUpdateView.as_view(), name='update'),
+    path('<int:pk>/delete/', BlogPostDeleteView.as_view(), name='delete'),
+]

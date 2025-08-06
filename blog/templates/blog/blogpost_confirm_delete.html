@@ -1,0 +1,15 @@
+<!-- templates/blog/blogpost_confirm_delete.html -->
+{% extends "blog/base.html" %}
+
+{% block title %}Удалить пост{% endblock %}
+
+{% block content %}
+<h1>Вы уверены, что хотите удалить "{{ object.title }}"?</h1>
+
+<form method="post">
+    {% csrf_token %}
+    <p><strong>Это действие нельзя отменить.</strong></p>
+    <button type="submit" class="btn btn-danger">Да, удалить</button>
+    <a href="{% url 'blog:detail' object.pk %}" class="btn btn-secondary">Отмена</a>
+</form>
+{% endblock %}
