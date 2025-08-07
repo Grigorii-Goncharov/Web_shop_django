@@ -1,6 +1,6 @@
 # views.py
 from django.views.generic import CreateView, ListView, DetailView, UpdateView, DeleteView
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from .models import BlogPost
 
 
@@ -33,20 +33,15 @@ class BlogPostCreateView(CreateView):
     fields = ['title', 'content', 'preview']
     success_url = reverse_lazy('blog:list')
 
-    def form_valid(self, form):
-        form.instance.is_published = True  # ← принудительно публикуем
-        return super().form_valid(form)
-
 
 class BlogPostUpdateView(UpdateView):
     model = BlogPost
     # template_name = 'blog/blogpost_form.html'
     fields = ['title', 'content', 'preview']
-    success_url = reverse_lazy('blog:list')
+    #success_url = reverse_lazy('blog:list')
 
-    def form_valid(self, form):
-        form.instance.is_published = True  # ← принудительно публикуем
-        return super().form_valid(form)
+    def get_success_url(self):
+        return reverse('blog:detail', kwargs = {'pk': self.object.pk})
 
 
 class BlogPostDeleteView(DeleteView):

@@ -7,7 +7,7 @@ class BlogPost(models.Model):
     content = models.TextField(verbose_name="Содержимое")
     preview = models.ImageField(upload_to='blog_previews/', blank=True, null=True, verbose_name="Изображение (превью)")
     created_at = models.DateTimeField(default=timezone.now, verbose_name="Дата создания")
-    is_published = models.BooleanField(default=False, verbose_name="Опубликовано")
+    is_published = models.BooleanField(default=True, verbose_name="Опубликовано")
     views_count = models.PositiveIntegerField(default=0, verbose_name="Количество просмотров")
 
     class Meta:
