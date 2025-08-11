@@ -1,31 +1,40 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render
 from django.http import HttpResponse
-from catalog.models import Products, Category
+from django.views.generic import ListView, DetailView
+from .models import Products, Category
+from django.views import View
 
 
-def home(request):
-    products = Products.objects.all()
-    category = Category.objects.all()
-    context = {'products': products, 'category': category}
-    return render(request, template_name="home.html", context=context)
+class HomeView(ListView):
+    model = Products
+    context_object_name = "products"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['category'] = Category.objects.all()
+        return context
 
 
-# def contacts(request):
-#     return render(request, template_name="contacts.html")
+class ProductDetailView(DetailView):
+    model = Products
+    context_object_name = 'product'
+    pk_url_kwarg = 'pk'  # совпадает с маршрутом <int:pk>, можно не указывать — по умолчанию и так 'pk'
 
-def product(request, pk):
-    '''Загрузка страницы с конкретным продуктом по первичному ключу'''
-    product = get_object_or_404(Products, pk=pk)
-    category = Category.objects.all()
-    context = {'product': product, 'category': category}
-    return render(request, 'product.html', context=context)
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['category'] = Category.objects.all()  # добавляем категории в контекст
+        return context
 
 
 # ФУНКЦИЯ ОТОБРАЖЕНИЯ И ОТПРАВКИ ФОРМЫ ЗАПРОСА
-def contacts(request):
-    if request.method == 'POST':
+class ContactsView(View):
+    template_name = 'catalog/contacts.html'
+
+    def get(self, request):
+        return render(request, self.template_name)
+
+    def post(self, request):
         name = request.POST.get('name')
         email = request.POST.get('email')
         message = request.POST.get('message')
         return HttpResponse(f"Спасибо, {name}! Ваше сообщение получено.")
-    return render(request, 'contacts.html')

@@ -1,0 +1,15 @@
+<!-- templates/blog/blogpost_form.html -->
+{% extends "blog/base.html" %}
+
+{% block title %}{% if object %}Редактировать пост{% else %}Новый пост{% endif %}{% endblock %}
+
+{% block content %}
+<h1>{% if object %}Редактировать "{{ object.title }}"{% else %}Создать новый пост{% endif %}</h1>
+
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit" class="btn btn-success">{% if object %}Сохранить{% else %}Опубликовать{% endif %}</button>
+    <a href="{% url 'blog:list' %}" class="btn btn-secondary">Отмена</a>
+</form>
+{% endblock %}
