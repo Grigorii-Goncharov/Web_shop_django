@@ -38,3 +38,11 @@ class ProductsForm(forms.ModelForm):
             if image.size > 5 * 1024 * 1024:
                 raise ValidationError('Размер не может превышать более 5 Мбайт')
         return image
+
+    def clean_purchase_price(self):
+        price = self.cleaned_data.get('purchase_price')
+        if price is not None and price < 0:
+            raise ValidationError('Цена не может быть отрицательной.')
+        return price
+
+
