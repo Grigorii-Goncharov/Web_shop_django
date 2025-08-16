@@ -58,6 +58,14 @@
           <button type="button" class="btn btn-lg btn-outline-primary flex-fill">
             Купить
           </button>
+
+          <button type="button" class="btn btn-lg btn-outline-success flex-fill" onclick="window.location='{% url 'catalog:update' pk=product.pk %}'">
+            редактировать
+          </button>
+
+           <button type="button" class="btn btn-lg btn-outline-danger flex-fill" onclick="window.location='{% url 'catalog:delete' pk=product.pk %}'">
+            удалить
+          </button>
         </div>
 
       </div> <!-- Конец карточки -->

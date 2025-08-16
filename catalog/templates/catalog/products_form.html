@@ -1,0 +1,25 @@
+{% extends 'catalog/base.html' %}
+{% block title %}Каталог{% endblock %}
+{% include "catalog/includes/inc_menu.html" %}
+
+{% block content %}
+   <div class="container-fluid p-4">
+        <h2> {% if form.instance.pk %}
+                Редактировать продукт: {{ form.instance.name|default:"Без названия" }}
+            {% else %}
+                Создать новый продукт
+            {% endif %}
+</h2>
+        <div class="row">
+            <div class="col-md-3 mb-4">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    {{ form.non_field_errors }}
+                    {{ form.as_p }}  <!-- Отображение полей формы -->
+                    <button type="submit" class="btn btn-primary" >Сохранить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
