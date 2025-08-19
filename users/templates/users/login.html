@@ -1,0 +1,17 @@
+{% extends 'catalog/base.html' %}
+{% block title %}{{ "Профиль" }}{% endblock %}
+
+{% include 'catalog/includes/inc_menu.html' %}
+
+{% block content %}
+  <h2>Вход</h2>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button type="submit">Войти</button>
+      </p>
+      Нет аккаунта? <a href="{% url 'users:register' %}">Зарегистрироваться</a>
+      </p>
+  </form>
+
+{% endblock %}

@@ -1,0 +1,18 @@
+{% extends 'catalog/base.html' %}
+{% block title %}{{ "Регистрация" }}{% endblock %}
+
+{% include 'catalog/includes/inc_menu.html' %}
+
+{% block content %}
+
+  <h2>Регистрация</h2>
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+       <form method="post" enctype="multipart/form-data">
+    <button type="submit">Зарегистрироваться</button>
+  </form>  <a href="{% url 'users:login' %}"> или войти</a>
+  </form>
+
+{% endblock %}
+

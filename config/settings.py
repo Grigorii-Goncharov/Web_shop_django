@@ -138,3 +138,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+AUTH_USER_MODEL = 'users.User'  # ← указываем, что User — из приложения users
+
+LOGIN_REDIRECT_URL = 'users:profile'  # или '/profile/', куда перейти после входа
+LOGOUT_REDIRECT_URL = 'users:home'  # куда после выхода
