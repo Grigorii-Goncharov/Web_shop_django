@@ -4,6 +4,17 @@
 {% include 'catalog/includes/inc_menu.html' %}
 
 {% block content %}
+
+<div class="container mt-4">
+  {% if messages %}
+    {% for message in messages %}
+      <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}{{ message.tags }}{% endif %} alert-dismissible fade show" role="alert">
+        {{ message }}
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+      </div>
+    {% endfor %}
+  {% endif %}
+
   <div class="container d-flex justify-content-center align-items-center min-vh-100">
     <div class="col-lg-4 col-md-6 col-sm-8">
       <div class="card border-0 shadow-lg rounded-4 overflow-hidden">
