@@ -15,6 +15,7 @@ class CustomUserCreationForm(UserCreationForm):
         fields = ["email", "password1", "password2", "phone", "country", "image"]
 
     def clean_email(self):
+        """Метод проверки на предмет совпадения почтового адреса в базе. Должен быть уникальным"""
         email = self.cleaned_data["email"]
         if User.objects.filter(email=email).exists():
             raise forms.ValidationError("Пользователь с таким email уже существует.")
@@ -29,12 +30,14 @@ class UserProfileForm(forms.ModelForm):
         fields = ["email", "phone", "country", "image"]
 
     def clean_phone(self):
+        """Метод проверки на номера телефона - должен быть числовым!"""
         phone = self.cleaned_data.get("phone")
         if phone and not phone.isdigit():
             raise forms.ValidationError("Номер телефона должен содержать только цифры.")
         return phone
 
     def clean_email(self):
+        """Метод проверки на email на корректность и его уникальность в Базе данных"""
         email = self.cleaned_data.get("email")
         if email:
             try:

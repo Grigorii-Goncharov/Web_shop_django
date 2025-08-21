@@ -4,6 +4,17 @@ from django.db import models
 
 
 class User(AbstractUser):
+    """Пользовательская модель пользователя с аутентификацией по email.
+    Вместо стандартного поля `username` используется `email` как уникальный идентификатор.
+    Поддерживает аватар, телефон, страну и токен для подтверждения email или сброса пароля.
+    Attributes:
+        email (EmailField): Уникальный email пользователя, используется для входа.
+        image (ImageField): Аватар пользователя (необязательное поле).
+        phone (CharField): Номер телефона (до 11 символов).
+        country (CharField): Страна проживания пользователя.
+        token (CharField): Токен для верификации email или сброса пароля (необязательный).
+    """
+
     username = None
     email = models.EmailField(
         unique=True, verbose_name="Электронная почта", validators=[EmailValidator()]
