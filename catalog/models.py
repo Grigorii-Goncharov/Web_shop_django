@@ -1,5 +1,7 @@
 from django.db import models
 
+from users.models import User
+
 
 class Category(models.Model):
     """Модель категории товара.
@@ -95,6 +97,8 @@ class Products(models.Model):
         verbose_name="Опубликовано",
         help_text="Указывает, опубликован ли товар на сайте. По умолчанию — не опубликован.",
     )
+
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="продукты пользователя")
 
     def __str__(self):
         """Возвращает строковое представление объекта Products.
