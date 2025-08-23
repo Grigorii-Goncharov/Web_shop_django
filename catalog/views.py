@@ -1,3 +1,5 @@
+from itertools import product
+
 from django.shortcuts import render
 from django.http import HttpResponse
 from django.views.generic import (
@@ -8,10 +10,12 @@ from django.views.generic import (
     DeleteView,
 )
 from django.urls import reverse_lazy, reverse
+
+import catalog
 from .models import Products, Category
 from django.views import View
 from .forms import ProductsForm
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
 
 
 class HomeView(ListView):
@@ -90,7 +94,7 @@ class ProductsUpdateView(LoginRequiredMixin, UpdateView):
         return reverse("catalog:product", kwargs={"pk": self.object.pk})
 
 
-class ProductsDeleteView(LoginRequiredMixin, DeleteView):
+class ProductsDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
     """Представление для удаления продукта.
     Доступно только авторизованным пользователям.
     После удаления перенаправляет на главную страницу.
@@ -98,6 +102,8 @@ class ProductsDeleteView(LoginRequiredMixin, DeleteView):
 
     model = Products
     success_url = reverse_lazy("catalog:home")
+    permission_required = 'catalog.delete_products'
+    raise_exception = True
 
 
 class ContactsView(View):
