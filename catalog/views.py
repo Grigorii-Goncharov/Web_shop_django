@@ -19,7 +19,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 
 
 class HomeView(ListView):
-    """ Представление для отображения главной страницы каталога.
+    """Представление для отображения главной страницы каталога.
     Отображает список продуктов на главной странице. Поведение зависит от прав пользователя:
     - Пользователи с правом 'catalog.can_unpublish_product' видят все товары (опубликованные и скрытые).
     - Обычные пользователи видят только опубликованные товары.
@@ -29,20 +29,23 @@ class HomeView(ListView):
         context_object_name (str): Имя переменной в шаблоне для списка объектов — 'products'.
         template_name (str): Путь к шаблону — 'catalog/home.html'.
     """
+
     model = Products
-    context_object_name = 'products'  # ← сейчас это object_list будет в 'product'
-    template_name = 'catalog/home.html'
+    context_object_name = "products"  # ← сейчас это object_list будет в 'product'
+    template_name = "catalog/home.html"
 
     def get_queryset(self):
         """Фильтруем: только опубликованные для обычных, все — для модераторов"""
-        if self.request.user.has_perm('catalog.can_unpublish_product'):
+        if self.request.user.has_perm("catalog.can_unpublish_product"):
             return Products.objects.all()  # модератор видит всё
         else:
-            return Products.objects.filter(is_published=True)  # остальные — только опубликованные
+            return Products.objects.filter(
+                is_published=True
+            )  # остальные — только опубликованные
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['category'] = Category.objects.all()
+        context["category"] = Category.objects.all()
         return context
 
 
@@ -95,14 +98,14 @@ class ProductsUpdateView(LoginRequiredMixin, UpdateView):
     form_class = ProductsForm
 
     def get_success_url(self):
-        return reverse('catalog:product', kwargs={'pk': self.object.pk})
+        return reverse("catalog:product", kwargs={"pk": self.object.pk})
 
     def post(self, request, *args, **kwargs):
         self.object = self.get_object()
 
         #  Если пришёл POST с флагом toggle_publish — просто переключаем статус
-        if 'toggle_publish' in request.POST:
-            if not request.user.has_perm('catalog.can_unpublish_product'):
+        if "toggle_publish" in request.POST:
+            if not request.user.has_perm("catalog.can_unpublish_product"):
                 return HttpResponseForbidden("У вас нет прав на публикацию")
 
             self.object.is_published = not self.object.is_published
@@ -121,7 +124,7 @@ class ProductsDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView
 
     model = Products
     success_url = reverse_lazy("catalog:home")
-    permission_required = 'catalog.delete_products'
+    permission_required = "catalog.delete_products"
     raise_exception = True
 
 

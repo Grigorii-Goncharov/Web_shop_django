@@ -8,7 +8,7 @@ from .views import (
     ProductsCreateView,
     ProductsDeleteView,
     ProductsUpdateView,
-     )
+)
 
 app_name = CatalogConfig.name
 
