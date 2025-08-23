@@ -61,15 +61,12 @@ class Products(models.Model):
         owner (ForeignKey): Владелец товара — пользователь из модели User.
                            Может быть пустым (null=True, blank=True).
                            При удалении пользователя все его товары удаляются (CASCADE).
-
     Permissions:
         can_unpublish_product: Разрешение, позволяющее снимать товар с публикации.
                                Назначается через группу или пользователя в админке.
-
     Example:
         Продукт: "Смартфон Iphone16 256GB" — 72000 ₽, категория "Электроника",
         опубликован: Да, владелец: user1@example.com.
-
     Note:
         Для фильтрации опубликованных товаров используйте:
         Products.objects.filter(is_published=True)

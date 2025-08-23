@@ -62,11 +62,6 @@
                         Купить
                     </button>
 
-                    <!-- Кнопка "Редактировать" -->
-                    <a href="{% url 'catalog:update' pk=product.pk %}" class="btn btn-lg btn-outline-success flex-fill">
-                        Редактировать
-                    </a>
-
                     <!-- Кнопка "Опубликовать/Скрыть" (в форме) -->
                     {% if perms.catalog.can_unpublish_product %}
                     <form method="post" action="{% url 'catalog:update' pk=product.pk %}" class="flex-fill">
@@ -83,10 +78,17 @@
                     </form>
                     {% endif %}
 
+                    {% if user == product.owner or perms.catalog.delete_products %}
+                     <!-- Кнопка "Редактировать" -->
+                    <a href="{% url 'catalog:update' pk=product.pk %}" class="btn btn-lg btn-outline-success flex-fill">
+                        Редактировать
+                    </a>
+
                     <!-- Кнопка "Удалить" -->
                     <a href="{% url 'catalog:delete' pk=product.pk %}" class="btn btn-lg btn-outline-danger flex-fill">
                         Удалить
                     </a>
+                    {% endif %}
                 </div>
 
             </div> <!-- Конец карточки -->

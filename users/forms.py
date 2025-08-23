@@ -23,7 +23,7 @@ class CustomUserCreationForm(UserCreationForm):
 
 
 class UserProfileForm(forms.ModelForm):
-    """Форма для редактирования профиля, без смены паролья"""
+    """Форма для редактирования профиля, без смены пароля"""
 
     class Meta:
         model = User
