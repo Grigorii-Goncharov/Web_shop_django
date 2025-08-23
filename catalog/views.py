@@ -1,6 +1,6 @@
 from itertools import product
 
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.views.generic import (
     ListView,
@@ -19,22 +19,30 @@ from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMix
 
 
 class HomeView(ListView):
-    """Представление для отображения главной страницы с товарами.
-    Отображает список всех продуктов и передаёт в контекст все категории.
+    """ Представление для отображения главной страницы каталога.
+    Отображает список продуктов на главной странице. Поведение зависит от прав пользователя:
+    - Пользователи с правом 'catalog.can_unpublish_product' видят все товары (опубликованные и скрытые).
+    - Обычные пользователи видят только опубликованные товары.
+    Дополнительно в контекст передаётся список всех категорий для навигации или фильтрации.
+    Attributes:
+        model (Model): Модель, на основе которой строится список — Products.
+        context_object_name (str): Имя переменной в шаблоне для списка объектов — 'products'.
+        template_name (str): Путь к шаблону — 'catalog/home.html'.
     """
-
     model = Products
-    context_object_name = "products"
+    context_object_name = 'products'  # ← сейчас это object_list будет в 'product'
+    template_name = 'catalog/home.html'
+
+    def get_queryset(self):
+        """Фильтруем: только опубликованные для обычных, все — для модераторов"""
+        if self.request.user.has_perm('catalog.can_unpublish_product'):
+            return Products.objects.all()  # модератор видит всё
+        else:
+            return Products.objects.filter(is_published=True)  # остальные — только опубликованные
 
     def get_context_data(self, **kwargs):
-        """Добавляет в контекст список всех категорий.
-        Args:
-            **kwargs: Дополнительные аргументы.
-        Returns:
-            dict: Контекст с продуктами и списком категорий.
-        """
         context = super().get_context_data(**kwargs)
-        context["category"] = Category.objects.all()
+        context['category'] = Category.objects.all()
         return context
 
 
@@ -87,11 +95,22 @@ class ProductsUpdateView(LoginRequiredMixin, UpdateView):
     form_class = ProductsForm
 
     def get_success_url(self):
-        """Определяет URL для перенаправления после успешного редактирования продукта.
-        Returns:
-            str: URL страницы отредактированного продукта.
-        """
-        return reverse("catalog:product", kwargs={"pk": self.object.pk})
+        return reverse('catalog:product', kwargs={'pk': self.object.pk})
+
+    def post(self, request, *args, **kwargs):
+        self.object = self.get_object()
+
+        #  Если пришёл POST с флагом toggle_publish — просто переключаем статус
+        if 'toggle_publish' in request.POST:
+            if not request.user.has_perm('catalog.can_unpublish_product'):
+                return HttpResponseForbidden("У вас нет прав на публикацию")
+
+            self.object.is_published = not self.object.is_published
+            self.object.save()
+            return redirect(self.get_success_url())
+
+        #  Иначе — обычное поведение (редактирование формы)
+        return super().post(request, *args, **kwargs)
 
 
 class ProductsDeleteView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):

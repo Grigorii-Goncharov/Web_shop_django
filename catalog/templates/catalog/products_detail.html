@@ -5,72 +5,101 @@
 {% block content %}
 
 <div class="container my-5">
-  <div class="row justify-content-center">
-    <div class="col-12 col-md-10 col-lg-8">
+    <div class="row justify-content-center">
+        <div class="col-12 col-md-10 col-lg-8">
 
-      <div class="card shadow-sm">
+            <div class="card shadow-sm">
 
-        <!-- Заголовок -->
-        <div class="card-header text-center bg-primary text-white">
-          <h3 class="card-title mb-0">{{ product.name }}</h3>
+                <!-- Заголовок -->
+                <div class="card-header text-center bg-primary text-white">
+                    <h3 class="card-title mb-0">{{ product.name }}</h3>
+                </div>
+
+                <!-- Изображение -->
+                <div class="text-center my-3">
+                    {% if product.image %}
+                    <img src="{{ product.image.url }}"
+                         alt="{{ product.name|escape }}"
+                         class="rounded" style="height: 400px; object-fit: cover; width: 80%; max-width: 500px;">
+                    {% else %}
+                    <img src="https://via.placeholder.com/500x400?text=Нет+фото"
+                         alt="Нет изображения"
+                         class="rounded" style="height: 400px; object-fit: cover; width: 80%; max-width: 500px;">
+                    {% endif %}
+                </div>
+
+                <!-- Основная информация -->
+                <div class="card-body text-center">
+                    <p class="mb-1"><strong>Артикул:</strong> {{ product.id }}</p>
+                    <p class="mb-2"><strong>Категория:</strong> {{ product.category }}</p>
+
+                    <hr>
+
+                    <p class="card-text">
+                        {{ product.description|linebreaksbr|truncatewords:60 }}
+                    </p>
+
+                    <h4 class="text-primary mt-3 mb-0">Цена: {{ product.purchase_price }} ₽</h4>
+
+                    <hr>
+
+                    <div class="text-muted small">
+                        <p class="mb-1">Дата публикации: {{ product.created_at|date:"d.m.Y H:i" }}</p>
+                        <p class="mb-0">Обновлено: {{ product.updated_at|date:"d.m.Y H:i" }}</p>
+                    </div>
+                </div>
+
+                <!-- Кнопки -->
+                <!-- Кнопки -->
+                <div class="card-footer d-flex flex-wrap gap-2 justify-content-center">
+                    <!-- Кнопка "Назад" -->
+                    <a href="{% url 'catalog:home' %}" class="btn btn-lg btn-outline-secondary flex-fill">
+                        Назад
+                    </a>
+
+                    <!-- Кнопка "Купить" -->
+                    <button type="button" class="btn btn-lg btn-outline-primary flex-fill">
+                        Купить
+                    </button>
+
+                    <!-- Кнопка "Редактировать" -->
+                    <a href="{% url 'catalog:update' pk=product.pk %}" class="btn btn-lg btn-outline-success flex-fill">
+                        Редактировать
+                    </a>
+
+                    <!-- Кнопка "Опубликовать/Скрыть" (в форме) -->
+                    {% if perms.catalog.can_unpublish_product %}
+                    <form method="post" action="{% url 'catalog:update' pk=product.pk %}" class="flex-fill">
+                        {% csrf_token %}
+                        <input type="hidden" name="toggle_publish" value="1">
+                        <button type="submit"
+                                class="btn btn-lg {% if product.is_published %}btn-info{% else %}btn-success{% endif %} w-100">
+                            {% if product.is_published %}
+                            Скрыть с сайта
+                            {% else %}
+                            Опубликовать
+                            {% endif %}
+                        </button>
+                    </form>
+                    {% endif %}
+
+                    <!-- Кнопка "Удалить" -->
+                    <a href="{% url 'catalog:delete' pk=product.pk %}" class="btn btn-lg btn-outline-danger flex-fill">
+                        Удалить
+                    </a>
+                </div>
+
+            </div> <!-- Конец карточки -->
         </div>
-
-        <!-- Изображение -->
-        <div class="text-center my-3">
-          {% if product.image %}
-            <img src="{{ product.image.url }}"
-                 alt="{{ product.name|escape }}"
-                 class="rounded" style="height: 400px; object-fit: cover; width: 80%; max-width: 500px;">
-          {% else %}
-            <img src="https://via.placeholder.com/500x400?text=Нет+фото"
-                 alt="Нет изображения"
-                 class="rounded" style="height: 400px; object-fit: cover; width: 80%; max-width: 500px;">
-          {% endif %}
-        </div>
-
-        <!-- Основная информация -->
-        <div class="card-body text-center">
-          <p class="mb-1"><strong>Артикул:</strong> {{ product.id }}</p>
-          <p class="mb-2"><strong>Категория:</strong> {{ product.category }}</p>
-
-          <hr>
-
-          <p class="card-text">
-            {{ product.description|linebreaksbr|truncatewords:60 }}
-          </p>
-
-          <h4 class="text-primary mt-3 mb-0">Цена: {{ product.purchase_price }} ₽</h4>
-
-          <hr>
-
-          <div class="text-muted small">
-            <p class="mb-1">Дата публикации: {{ product.created_at|date:"d.m.Y H:i" }}</p>
-            <p class="mb-0">Обновлено: {{ product.updated_at|date:"d.m.Y H:i" }}</p>
-          </div>
-        </div>
-
-        <!-- Кнопки -->
-        <div class="card-footer d-flex gap-2 justify-content-center">
-          <button class="btn btn-lg btn-outline-secondary flex-fill"
-                  onclick="window.location='{% url 'catalog:home' %}'">
-            Назад
-          </button>
-          <button type="button" class="btn btn-lg btn-outline-primary flex-fill">
-            Купить
-          </button>
-
-          <button type="button" class="btn btn-lg btn-outline-success flex-fill" onclick="window.location='{% url 'catalog:update' pk=product.pk %}'">
-            редактировать
-          </button>
-
-           <button type="button" class="btn btn-lg btn-outline-danger flex-fill" onclick="window.location='{% url 'catalog:delete' pk=product.pk %}'">
-            удалить
-          </button>
-        </div>
-
-      </div> <!-- Конец карточки -->
     </div>
-  </div>
 </div>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+        tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+            new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+    })
+</script>
 
 {% endblock %}
