@@ -98,7 +98,7 @@ class Products(models.Model):
         help_text="Указывает, опубликован ли товар на сайте. По умолчанию — не опубликован.",
     )
 
-    owner = models.ForeignKey(User, on_delete=models.CASCADE, related_name="продукты пользователя")
+    owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="продукты пользователя")
 
     def __str__(self):
         """Возвращает строковое представление объекта Products.
