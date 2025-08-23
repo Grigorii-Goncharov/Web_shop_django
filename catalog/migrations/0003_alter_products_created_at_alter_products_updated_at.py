@@ -6,18 +6,18 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('catalog', '0002_alter_products_image'),
+        ("catalog", "0002_alter_products_image"),
     ]
 
     operations = [
         migrations.AlterField(
-            model_name='products',
-            name='created_at',
+            model_name="products",
+            name="created_at",
             field=models.DateTimeField(auto_now_add=True, null=True),
         ),
         migrations.AlterField(
-            model_name='products',
-            name='updated_at',
+            model_name="products",
+            name="updated_at",
             field=models.DateTimeField(auto_now=True, null=True),
         ),
     ]

@@ -14,6 +14,7 @@
 3. Перенести проект в локальный репозиторий.
 4. Откройте модуль manage.py и перейдите по сслыке http://127.0.0.1:8000/
 5. Откройте модуль manage.py и перейдите по сслыке http://127.0.0.1:8000/blog/ - запуск приложения Блога с путешествиями
+6. Добавалена регистрация и атторизация приложения catalog
 
 создание фикстур:
 "python -Xutf8 manage.py dumpdata catalog.Products catalog.Category --output general_fixture.json --indent 4"  - общие
