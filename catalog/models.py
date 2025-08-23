@@ -90,6 +90,12 @@ class Products(models.Model):
         help_text="Автоматически обновляется при каждом изменении.",
     )
 
+    is_published = models.BooleanField(
+        default=False,
+        verbose_name="Опубликовано",
+        help_text="Указывает, опубликован ли товар на сайте. По умолчанию — не опубликован.",
+    )
+
     def __str__(self):
         """Возвращает строковое представление объекта Products.
         Returns:
@@ -106,3 +112,6 @@ class Products(models.Model):
             "name",
             "purchase_price",
         ]  # Сортировка сначала по имени, затем по цене
+        permissions = [
+            ("can_unpublish_product", "Может отменять публикацию продукта"),
+        ]
