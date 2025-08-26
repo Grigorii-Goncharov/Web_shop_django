@@ -198,3 +198,45 @@ class ContactsView(View):
         email = request.POST.get("email")
         message = request.POST.get("message")
         return HttpResponse(f"Спасибо, {name}! Ваше сообщение получено.")
+
+
+# catalog/views.py
+
+from django.shortcuts import get_object_or_404
+from .services import get_products_by_category
+
+
+
+
+
+
+class ProductsByCategoryView(ListView):
+    """
+    Представление для отображения всех продуктов в указанной категории.
+    Поведение зависит от прав пользователя:
+    - Модераторы (с правом can_unpublish_product) видят все товары.
+    - Обычные пользователи — только опубликованные.
+    """
+
+    model = Products
+    context_object_name = "products"
+    template_name = "catalog/products_by_category.html"
+    paginate_by = 10  # Опционально: пагинация
+
+    def get_queryset(self):
+        category_id = self.kwargs["category_id"]
+        products = get_products_by_category(category_id)
+
+        # Фильтрация по статусу публикации
+        if not self.request.user.has_perm("catalog.can_unpublish_product"):
+            products = products.filter(is_published=True)
+
+        return products
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        category_id = self.kwargs["category_id"]
+        category = get_object_or_404(Category, pk=category_id)
+        context["category"] = category
+        context["categories"] = Category.objects.all()  # Для навигации
+        return context

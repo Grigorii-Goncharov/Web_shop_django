@@ -8,34 +8,73 @@
     <p class="lead">Web Shop Django - это тестовый магазин приложений в рамках обучения SkyPRO</p>
 </div>
 
-<div class="container">
-    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
-        {% for product in products %}
-        <div class="col">
-            <div class="card h-100 d-flex flex-column">
-                <!-- Изображение -->
-                {% if product.image %}
-                    <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name|escape }}" style="height: 200px; object-fit: cover;">
-                {% else %}
-                    <img src="/static/images/placeholder.jpg" class="card-img-top" alt="Нет изображения" style="height: 200px; object-fit: cover;">
-                {% endif %}
-
-                <!-- Тело карточки -->
-                <div class="card-body d-flex flex-column">
-                    <h5 class="card-title">{{ product.name|truncatechars:40 }}</h5>
-                    <p class="card-text text-muted">{{ product.description|truncatechars:100 }}</p>
+<div class="container-fluid mt-4">
+    <div class="row">
+        <!-- Левое меню с категориями -->
+        <div class="col-lg-2 col-md-4 mb-4">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <h5 class="mb-0">Категории</h5>
                 </div>
-
-                <!-- Футер: цена и кнопка -->
-                <div class="card-footer d-flex flex-column gap-2">
-                    <h5 class="text-primary mb-0 text-center">Цена: {{ product.purchase_price }} ₽</h5>
-                    <a href="{% url 'catalog:product' pk=product.pk %}" class="btn btn-outline-primary btn-sm">
-                        Подробнее
-                    </a>
-                </div>
+                <ul class="list-group list-group-flush">
+                    {% for cat in categories %}
+                    <li class="list-group-item {% if cat == category %}active{% endif %}">
+                        <a href="{% url 'catalog:products_by_category' category_id=cat.pk %}"
+                           class="text-decoration-none {% if cat == category %}text-white{% else %}text-dark{% endif %}">
+                            {{ cat.name }}
+                        </a>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-muted">Категории отсутствуют</li>
+                    {% endfor %}
+                </ul>
             </div>
         </div>
-        {% endfor %}
-    </div>
-</div>
-{% endblock %}
+
+        <!-- Карточки товаров справа -->
+        <div class="col-lg-10 col-md-8">
+            <h2 class="mb-4">Все товары</h2>
+
+            {% if products %}
+            <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+                {% for product in products %}
+                <div class="col d-flex">
+                    <div class="card h-100 d-flex flex-column" style="min-height: 420px;">
+                        <!-- Изображение с фиксированной высотой -->
+                        <div class="position-relative" style="height: 180px; overflow: hidden;">
+                            {% if product.image %}
+                            <img src="{{ product.image.url }}" class="w-100 h-100" style="object-fit: cover;"
+                                 alt="{{ product.name|escape }}">
+                            {% else %}
+                            <img src="/static/images/placeholder.jpg" class="w-100 h-100" style="object-fit: cover;"
+                                 alt="Нет изображения">
+                            {% endif %}
+                        </div>
+
+                        <!-- Тело карточки с фиксированной высотой текста -->
+                        <div class="card-body d-flex flex-column" style="flex: 1;">
+                            <h5 class="card-title mb-2" style="font-size: 1rem; line-height: 1.3;">{{
+                                product.name|truncatechars:30 }}</h5>
+                            <p class="card-text text-muted mb-0 flex-grow-1"
+                               style="font-size: 0.9rem; line-height: 1.4;">
+                                {{ product.description|truncatechars:80 }}
+                            </p>
+                        </div>
+
+                        <!-- Футер -->
+                        <div class="card-footer d-flex flex-column gap-2 pt-2">
+                            <h5 class="text-primary mb-1 text-center" style="font-size: 1rem;">{{ product.purchase_price
+                                }} ₽</h5>
+                            <a href="{% url 'catalog:product' pk=product.pk %}" class="btn btn-outline-primary btn-sm">
+                                Подробнее
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="alert alert-info">Товары отсутствуют.</div>
+            {% endif %}
+        </div>
+        {% endblock %}
