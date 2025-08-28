@@ -1,56 +1,78 @@
+from django.core.cache import cache
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView
+from django.http import HttpResponse, HttpResponseForbidden
+from django.views.generic import (
+    ListView,
+    DetailView,
+    CreateView,
+    UpdateView,
+    DeleteView,
+)
 from django.urls import reverse_lazy, reverse
-
 from .models import Products, Category
 from django.views import View
 from .forms import ProductsForm
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.shortcuts import get_object_or_404
+from .services import get_products_by_category
 
 
 class HomeView(ListView):
-    """Представление главной страницы каталога.
-
-    Отображает список продуктов. Поведение зависит от прав пользователя:
+    """Отображает главную страницу каталога с продуктами.
+    Показывает список продуктов в зависимости от прав пользователя:
     - Пользователи с правом 'catalog.can_unpublish_product' видят все товары.
     - Остальные пользователи видят только опубликованные товары.
-    В контекст также передаётся список всех категорий для навигации или фильтрации.
+    Также добавляет в контекст список всех категорий для навигации.
     Attributes:
-        model (Model): Модель, на основе которой строится список — Products.
+        model (Model): Модель, используемая для получения данных — Products.
         context_object_name (str): Имя переменной в шаблоне для списка продуктов.
-        template_name (str): Путь к шаблону.
+        template_name (str): Используемый шаблон.
     """
-
     model = Products
     context_object_name = "products"
     template_name = "catalog/home.html"
 
     def get_queryset(self):
-        """Возвращает queryset продуктов в зависимости от прав пользователя.
+        """Возвращает queryset продуктов, отфильтрованный по правам пользователя.
+        Если пользователь имеет право 'catalog.can_unpublish_product', показываются все товары.
+        В противном случае — только опубликованные. Результат кэшируется на 60 секунд.
         Returns:
-            QuerySet: Все продукты (для модераторов) или только опубликованные.
+            QuerySet: Отфильтрованный набор продуктов.
         """
-        if self.request.user.has_perm("catalog.can_unpublish_product"):
-            return Products.objects.all()
-        return Products.objects.filter(is_published=True)
+        if self.request.user.is_authenticated and self.request.user.has_perm('catalog.can_unpublish_product'):
+            cache_key = 'home_view_all_products'
+            queryset = Products.objects.all()
+        else:
+            cache_key = 'home_view_published_only'
+            queryset = Products.objects.filter(is_published=True)
+
+        return cache.get_or_set(cache_key, queryset, 60)
 
     def get_context_data(self, **kwargs):
         """Добавляет в контекст список всех категорий.
+        Список категорий кэшируется на 60 секунд.
         Args:
             **kwargs: Дополнительные аргументы.
         Returns:
             dict: Контекст с продуктами и списком категорий.
         """
         context = super().get_context_data(**kwargs)
-        context["categories"] = Category.objects.all()
+        context['categories'] = cache.get_or_set(
+            'category_list',
+            lambda: Category.objects.exclude(id__isnull=True),
+            60
+        )
         return context
 
 
 class ProductDetailView(DetailView):
-    """Представление детальной информации о продукте.
-    Отображает полную информацию о товаре по его ID.
+    """Отображает детальную информацию о продукте.
+    Показывает полную информацию о продукте по его первичному ключу.
     В контекст добавляется список всех категорий для навигации.
+    Attributes:
+        model (Model): Модель продукта.
+        context_object_name (str): Имя переменной в шаблоне.
+        pk_url_kwarg (str): Имя параметра URL, содержащего первичный ключ.
     """
 
     model = Products
@@ -71,9 +93,8 @@ class ProductDetailView(DetailView):
 
 class ProductsCreateView(LoginRequiredMixin, CreateView):
     """Представление для создания нового продукта.
-
     Доступно только авторизованным пользователям.
-    При создании автоматически устанавливает текущего пользователя как владельца.
+    При сохранении устанавливает текущего пользователя как владельца продукта.
     После успешного создания перенаправляет на страницу созданного продукта.
     Attributes:
         model (Model): Модель продукта.
@@ -84,7 +105,7 @@ class ProductsCreateView(LoginRequiredMixin, CreateView):
     form_class = ProductsForm
 
     def form_valid(self, form):
-        """Устанавливает текущего пользователя как владельца перед сохранением.
+        """Присваивает текущего пользователя как владельца перед сохранением.
         Args:
             form (ProductsForm): Форма с валидированными данными.
         Returns:
@@ -104,8 +125,12 @@ class ProductsCreateView(LoginRequiredMixin, CreateView):
 class ProductsUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     """Представление для редактирования продукта.
     Доступно владельцу продукта или пользователям с правом 'catalog.delete_products'.
-    Поддерживает переключение статуса публикации при отправке специального POST-параметра.
+    Поддерживает переключение статуса публикации через POST-параметр 'toggle_publish'.
     После успешного редактирования перенаправляет на страницу продукта.
+    Attributes:
+        model (Model): Модель продукта.
+        form_class (Form): Форма для редактирования.
+        raise_exception (bool): Если True, вызывает 403 при отказе в доступе.
     """
 
     model = Products
@@ -114,7 +139,7 @@ class ProductsUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 
     def test_func(self):
         """Проверяет, является ли пользователь владельцем или имеет право на удаление.
-        Используется UserPassesTestMixin для проверки доступа.
+        Используется для контроля доступа через UserPassesTestMixin.
         Returns:
             bool: True, если пользователь — владелец или имеет право.
         """
@@ -130,13 +155,13 @@ class ProductsUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
         return reverse("catalog:product", kwargs={"pk": self.object.pk})
 
     def post(self, request, *args, **kwargs):
-        """Обрабатывает POST-запрос: либо редактирование, либо переключение публикации.
-        Если в запросе есть параметр 'toggle_publish', переключает статус публикации.
-        Требует права 'catalog.can_unpublish_product'.
+        """Обрабатывает POST-запрос: редактирование или переключение публикации.
+        Если в запросе присутствует параметр 'toggle_publish', переключает статус
+        публикации продукта. Требует права 'catalog.can_unpublish_product'.
         Args:
             request (HttpRequest): POST-запрос.
         Returns:
-            HttpResponse: Редирект или результат стандартной обработки.
+            HttpResponse: Редирект или стандартный ответ обработки формы.
         """
         self.object = self.get_object()
 
@@ -153,7 +178,11 @@ class ProductsUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
 class ProductsDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     """Представление для удаления продукта.
     Доступно владельцу продукта или пользователям с правом 'catalog.delete_products'.
-    После удаления перенаправляет на главную страницу.
+    После успешного удаления перенаправляет на главную страницу.
+    Attributes:
+        model (Model): Модель продукта.
+        success_url (str): URL для перенаправления после удаления.
+        raise_exception (bool): Если True, вызывает 403 при отказе в доступе.
     """
 
     model = Products
@@ -171,8 +200,11 @@ class ProductsDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
 
 
 class ContactsView(View):
-    """Представление страницы контактов.
-    Обрабатывает GET-запрос (отображение формы) и POST-запрос (обработка данных).
+    """Отображает и обрабатывает форму обратной связи на странице контактов.
+    Обрабатывает GET-запрос (показ формы) и POST-запрос (приём данных).
+    После отправки возвращает подтверждение.
+    Attributes:
+        template_name (str): Имя используемого шаблона.
     """
 
     template_name = "catalog/contacts.html"
@@ -182,7 +214,7 @@ class ContactsView(View):
         Args:
             request (HttpRequest): GET-запрос.
         Returns:
-            HttpResponse: Отрендеренный шаблон формы.
+            HttpResponse: Отрендеренный шаблон с формой.
         """
         return render(request, self.template_name)
 
@@ -198,3 +230,51 @@ class ContactsView(View):
         email = request.POST.get("email")
         message = request.POST.get("message")
         return HttpResponse(f"Спасибо, {name}! Ваше сообщение получено.")
+
+
+class ProductsByCategoryView(ListView):
+    """Отображает продукты, относящиеся к указанной категории.
+    Поведение зависит от прав пользователя:
+    - Пользователи с правом 'catalog.can_unpublish_product' видят все товары.
+    - Остальные — только опубликованные.
+    Поддерживает пагинацию (по 10 товаров на страницу).
+    Attributes:
+        model (Model): Модель продуктов.
+        context_object_name (str): Имя переменной в шаблоне.
+        template_name (str): Имя шаблона.
+        paginate_by (int): Количество товаров на странице.
+    """
+
+    model = Products
+    context_object_name = "products"
+    template_name = "catalog/products_by_category.html"
+    paginate_by = 10
+
+    def get_queryset(self):
+        """Возвращает продукты указанной категории, отфильтрованные по правам.
+        Args:
+            category_id (int): ID категории из URL.
+        Returns:
+            QuerySet: Продукты указанной категории, отфильтрованные по статусу публикации.
+        """
+        category_id = self.kwargs["category_id"]
+        products = get_products_by_category(category_id)
+
+        if not self.request.user.has_perm("catalog.can_unpublish_product"):
+            products = products.filter(is_published=True)
+
+        return products
+
+    def get_context_data(self, **kwargs):
+        """Добавляет в контекст текущую категорию и список всех категорий.
+        Args:
+            **kwargs: Дополнительные аргументы.
+        Returns:
+            dict: Контекст с продуктами, текущей категорией и списком категорий.
+        """
+        context = super().get_context_data(**kwargs)
+        category_id = self.kwargs["category_id"]
+        category = get_object_or_404(Category, pk=category_id)
+        context["category"] = category
+        context["categories"] = Category.objects.all()
+        return context
